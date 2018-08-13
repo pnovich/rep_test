@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+
 import javax.servlet.MultipartConfigElement;
 
 //@SpringBootApplication
@@ -26,6 +27,7 @@ public class HttptestApplication {
 //	}
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(HttptestApplication.class, args);
 	}
 
