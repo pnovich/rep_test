@@ -1,6 +1,7 @@
 package com.example.httptest.Service;
 import java.io.*;
 
+import com.example.httptest.AppResponse;
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -29,7 +30,7 @@ String user;
 String pwd;
     FTPClient ftp = null;
 
-    public boolean setupConnection() throws Exception {
+    public boolean setupConnection(AppResponse appResponse) throws Exception {
         boolean hostcon = false;
         boolean con = false;
         ftp = new FTPClient();
@@ -38,7 +39,7 @@ String pwd;
         ftp.connect(host);
         reply = ftp.getReplyCode();
         System.out.println("the reply -------= " + reply);
-//        if (reply == 220 || reply == 331 || reply == 530 ) System.out.println("wwwWWWWWWWWWWWWWWWWWWWWWWWWW");
+//        if (reply == 220 || reply == 331 || reply == 530 ) System.out.println("w");
         if (!FTPReply.isPositiveCompletion(reply)) {
 
             ftp.disconnect();
@@ -46,14 +47,19 @@ String pwd;
             throw new Exception("Exception in connecting to FTP Server");
         }
         else {
+            appResponse.setFtpHostConnection(true);
             ftp.enterLocalPassiveMode();
             ftp.login(user, pwd);
             reply = ftp.getReplyCode();
             System.out.println("reply2 -------=" + reply);
             ftp.setFileType(FTP.BINARY_FILE_TYPE);
+            appResponse.setFtpLogging(true);
             con = true;
         }
-        if (!(reply == 230)) con = false;
+        if (!(reply == 230)) {
+            con = false;
+            appResponse.setFtpLogging(false);
+        }
         System.out.println("connection -----" + con);
         hostcon = true;
         return con;
@@ -65,9 +71,11 @@ String pwd;
 
 
             String localFileFullName = fullPath + fileName;
-            try (InputStream input = new FileInputStream(new File(localFileFullName))) {
+            try {InputStream input = new FileInputStream(new File(localFileFullName));
                 this.ftp.storeFile(hostDir + fileName, input);
                 System.out.println("try sending");
+            }catch (Exception e){
+                System.out.println("exception");
             }
 
     }
