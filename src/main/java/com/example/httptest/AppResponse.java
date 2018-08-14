@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AppResponse {
+
+
     String Status;
 
     @Override
@@ -13,8 +15,8 @@ public class AppResponse {
                 '}';
     }
 
-    public AppResponse(String status) {
-        Status = status;
+    public AppResponse() {
+        Status = "status";
     }
 
     public String getStatus() {
