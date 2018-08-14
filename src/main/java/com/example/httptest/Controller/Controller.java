@@ -13,9 +13,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
-//import java.util.logging.Logger;
 
-@Scope("request")
+
+
 @RestController
 public class Controller {
 
@@ -36,7 +36,7 @@ public class Controller {
 
     @GetMapping("/ftpsend")
     public AppResponse hi(@RequestParam("filestring") String[] stringarray){
-//        AppResponse appResponse = new AppResponse();
+
         appResponse.Status = "sux";
         appResponse.filesUploadSux = false;
         appResponse.ftpHostConnection = false;
