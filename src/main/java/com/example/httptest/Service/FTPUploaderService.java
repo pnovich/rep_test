@@ -10,28 +10,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.core.env.Environment;
 
+import static org.apache.commons.net.ftp.FTPReply.COMMAND_OK;
+
 @Service
 public class FTPUploaderService {
 
-//    String host ="ftp.javabebop-com-ua.1gb.ua";
-//    String host1 = "test.rebex.net";
-//    String user1 = "demo";
-//    String pwd1 = "password";
-////    String localFileFullName = "D:\\Pankaj\\images\\MyImage.png";
-////    String fileName = "image.png";
-//    String hostDir = "/";
-//    String user = "w_javabebop-com-ua_1a9aeef1";
-//    String pwd = "b7286fa58wr";
-////    @Autowired
-//    private Environment env;
-//    String keyValue = env.getProperty(key);
-//    @Value("${application.fullPath}")
-//    String fullPath;
+
 @Value("${application.host}")
 String host;
 
-@Value("${application.hostDir}")
-String hostDir;
+
+String hostDir = "/";
 
 @Value("${application.user}")
 String user;
@@ -40,20 +29,34 @@ String user;
 String pwd;
     FTPClient ftp = null;
 
-    public void setupConnection() throws Exception {
+    public boolean setupConnection() throws Exception {
+        boolean hostcon = false;
+        boolean con = false;
         ftp = new FTPClient();
         ftp.addProtocolCommandListener(new PrintCommandListener(new PrintWriter(System.out)));
         int reply;
         ftp.connect(host);
         reply = ftp.getReplyCode();
+        System.out.println("the reply -------= " + reply);
+//        if (reply == 220 || reply == 331 || reply == 530 ) System.out.println("wwwWWWWWWWWWWWWWWWWWWWWWWWWW");
         if (!FTPReply.isPositiveCompletion(reply)) {
+
             ftp.disconnect();
+            System.out.println("no connection");
             throw new Exception("Exception in connecting to FTP Server");
         }
-        ftp.enterLocalPassiveMode();
-        ftp.login(user, pwd);
-        ftp.setFileType(FTP.BINARY_FILE_TYPE);
-
+        else {
+            ftp.enterLocalPassiveMode();
+            ftp.login(user, pwd);
+            reply = ftp.getReplyCode();
+            System.out.println("reply2 -------=" + reply);
+            ftp.setFileType(FTP.BINARY_FILE_TYPE);
+            con = true;
+        }
+        if (!(reply == 230)) con = false;
+        System.out.println("connection -----" + con);
+        hostcon = true;
+        return con;
     }
 
     public void uploadFile(String fileName, String fullPath)
@@ -64,7 +67,7 @@ String pwd;
             String localFileFullName = fullPath + fileName;
             try (InputStream input = new FileInputStream(new File(localFileFullName))) {
                 this.ftp.storeFile(hostDir + fileName, input);
-                System.out.println("try ftp");
+                System.out.println("try sending");
             }
 
     }

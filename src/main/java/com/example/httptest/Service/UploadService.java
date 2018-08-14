@@ -10,15 +10,18 @@ import java.io.FileReader;
 @Service
 public class UploadService {
 
-    public void doRead(String filename, String fullName){
+    public boolean doRead(String filename, String fullName) throws  Exception{
+
         try(BufferedReader br = new BufferedReader(new FileReader(fullName + filename))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
             System.out.println(line);
+
         }
         catch(Exception e){
-            System.out.println(e);
+         return false;
         }
+        return true;
     }
 
 
